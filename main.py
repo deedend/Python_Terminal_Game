@@ -1,22 +1,24 @@
 import math
 
-def monthly_repayment(loan, interest, duration):
-    if type(loan) == int  or type(interest) == float or type(duration) == int:
-        monthly_rate = interest / 100 / 12
-        total_nr_repayments = duration * 12
-        monthly_repayment = loan * (monthly_rate * (1 + monthly_rate) ** total_nr_repayments) / ((1 + monthly_rate) ** total_nr_repayments - 1)
+def monthly_repayment(amount, interest, duration):
+    if not all(isinstance(value, (int, float)) for value in [amount, interest, duration]):
+        monthly_rate = float(interest) / 100 / 12
+        total_nr_repayments = int(duration) * 12
+        repayment = int(amount) * (monthly_rate * (1 + monthly_rate) ** total_nr_repayments) / ((1 + monthly_rate) ** total_nr_repayments - 1)
     else:
         print("Please use number values")
-    return monthly_repayment
+    return round(repayment, 2)
 
 def loan_amount(repayment, interest, duration):
-    if type(repayment) == int  or type(interest) == float or type(duration) == int:
-        monthly_rate = interest / 100 / 12
-        total_nr_repayments = duration * 12
-        loan = repayment * ((1 + monthly_rate) ** total_nr_repayments - 1) / (monthly_rate * (1 + monthly_rate) ** total_nr_repayments)
-    else:
-        print("Please use number values")
-    return loan
+    if not all(isinstance(value, (int, float)) for value in [repayment, interest, duration]):
+        print("Please use numeric values for repayment, interest, and duration.")
+        return None
+    monthly_rate = interest / 100 / 12
+    total_nr_repayments = duration * 12
+    if monthly_rate == 0:
+        return repayment * total_nr_repayments
+    loan = repayment * ((1 + monthly_rate) ** total_nr_repayments - 1) / (monthly_rate * (1 + monthly_rate) ** total_nr_repayments)
+    return round(loan, 0)
 
 def loan_duration(repayment, interest, amount):
     if type(repayment) == int  or type(interest) == float or type(amount) == int:
@@ -30,33 +32,27 @@ def loan_duration(repayment, interest, amount):
         print("Please use number values")
     return round(duration, 1)
 
-def interest_rate(loan, repayment, duration):
-    if not all(isinstance(value, (int, float)) for value in [loan, repayment, duration]):
+def interest_rate(amount, repayment, duration):
+    if not all(isinstance(value, (int, float)) for value in [amount, repayment, duration]):
         print("Please use valid numeric values")
         return
     cover = repayment * 12 * duration
-    if cover < loan:
+    if cover < amount:
         print("Repayment is too low to cover the loan: consider increasing it")
         return None
     interest = 0.01
-    #if repayment <= loan * (interest / 100 / 12):
-        #print("Repayment amount is too low for the given loan and duration")
-        #return
     
     monthly_rate = interest / 100 / 12
     total_nr_repayments = duration * 12
     inter = True
-    #max_iterations = 1000
     iteration = 0
     previous_adjustment = 0
     
     while inter:
         if monthly_rate == 0:
             raise ValueError("Monthly rate cannot be zero")
-        monthly_calculated = loan * (monthly_rate * (1 + monthly_rate) ** total_nr_repayments) / ((1 + monthly_rate) ** total_nr_repayments - 1)
-        #print(f"monthly calculated = {monthly_calculated}")
+        monthly_calculated = amount * (monthly_rate * (1 + monthly_rate) ** total_nr_repayments) / ((1 + monthly_rate) ** total_nr_repayments - 1)
         difference = abs(monthly_calculated - repayment)
-        #print(f"difference = {difference}")
         if round(difference, 3) > 0.01:
             adjustment = 0.1 * (difference / repayment)
             if monthly_calculated < repayment:
@@ -70,19 +66,37 @@ def interest_rate(loan, repayment, duration):
                 print("Adjustment is small enough, breaking the loop.")
                 break
             interest += adjustment
-            #print(f"interest = {interest}")
-            #print(f"adjustment = {adjustment}")
-            #print(f"interest = {interest}")
             if interest <= 0:
                 print("Unable to find a suitable interest rate. Consider increasing the repayment amount.")
                 return None
             monthly_rate = interest / 100 / 12
         else:
             inter = False
-        #iteration += 1
-        #if iteration >= max_iterations:
-            #print(f"Failed to converge on an interest rate after {iteration} iterations. Last calculated rate: {interest}%, with a montly repayment of  {monthly_calculated}$.")
-            #return None
     return round(interest, 3), round(monthly_calculated, 0)
 
-print(loan_duration(5000,5,500000))
+while True:
+    print("*** CodeCademy project - Mortgage Calculator ***\n")
+    choice = input("Choose an option: \n1 - Calculate monthly repayment\n2 - Calculate loan amount\n3 - Calculate loan duration\n4 - Calculate (approximate) interest rate\nQ - Quit\n\nInput: ")
+    if choice == "1":
+          amount = int(input("Enter the loan amount: "))
+          interest = float(input("Enter the interest rate: "))
+          duration = int(input("Enter the duration of the mortgage: "))
+          print(monthly_repayment(amount, interest, duration))
+    elif choice == "2":
+          repayment = int(input("Enter the repayment amount: "))
+          interest = float(input("Enter the interest rate: "))
+          duration = int(input("Enter the duration of the mortgage: "))
+          print(loan_amount(repayment, interest, duration))
+    elif choice == "3":
+          repayment = int(input("Enter the repayment amount: "))
+          interest = float(input("Enter the interest rate: "))
+          amount = int(input("Enter the loan amount: "))
+          print(loan_duration(repayment, interest, amount))
+    elif choice == "4":
+          repayment = int(input("Enter the repayment amount: "))
+          amount = int(input("Enter the loan amount: "))
+          duration = int(input("Enter the duration of the mortgage: "))
+          print(f"The mortgage is {loan_duration(repayment, interest, amount)} years long")
+    else:
+          print("Exiting...")
+          break
