@@ -1,13 +1,13 @@
 import math
 
 def monthly_repayment(amount, interest, duration):
-    if not all(isinstance(value, (int, float)) for value in [amount, interest, duration]):
+    if all(isinstance(value, (int, float)) for value in [amount, interest, duration]):
         monthly_rate = float(interest) / 100 / 12
         total_nr_repayments = int(duration) * 12
         repayment = int(amount) * (monthly_rate * (1 + monthly_rate) ** total_nr_repayments) / ((1 + monthly_rate) ** total_nr_repayments - 1)
+        return round(repayment, 2)
     else:
         print("Please use number values")
-    return round(repayment, 2)
 
 def loan_amount(repayment, interest, duration):
     if not all(isinstance(value, (int, float)) for value in [repayment, interest, duration]):
@@ -72,7 +72,7 @@ def interest_rate(amount, repayment, duration):
             monthly_rate = interest / 100 / 12
         else:
             inter = False
-    return round(interest, 3), round(monthly_calculated, 0)
+    return round(interest, 3)#, round(monthly_calculated, 0)
 
 while True:
     print("*** CodeCademy project - Mortgage Calculator ***\n")
@@ -81,22 +81,26 @@ while True:
           amount = int(input("Enter the loan amount: "))
           interest = float(input("Enter the interest rate: "))
           duration = int(input("Enter the duration of the mortgage: "))
-          print(monthly_repayment(amount, interest, duration))
+          repayments = monthly_repayment(amount, interest, duration)
+          print(f"The monthly repayments are {repayments}$")
     elif choice == "2":
           repayment = int(input("Enter the repayment amount: "))
           interest = float(input("Enter the interest rate: "))
           duration = int(input("Enter the duration of the mortgage: "))
-          print(loan_amount(repayment, interest, duration))
+          amount = loan_amount(repayment, interest, duration)
+          print(f"The amount you can borrow is {amount}$")
     elif choice == "3":
           repayment = int(input("Enter the repayment amount: "))
           interest = float(input("Enter the interest rate: "))
           amount = int(input("Enter the loan amount: "))
-          print(loan_duration(repayment, interest, amount))
+          duration = loan_duration(repayment, interest, amount)
+          print(f"The mortgage is {duration} years long")
     elif choice == "4":
           repayment = int(input("Enter the repayment amount: "))
           amount = int(input("Enter the loan amount: "))
           duration = int(input("Enter the duration of the mortgage: "))
-          print(f"The mortgage is {loan_duration(repayment, interest, amount)} years long")
+          interest = interest_rate(amount, repayment, duration)
+          print(f"The approximate interest rate is {interest}%")
     else:
           print("Exiting...")
           break
