@@ -43,15 +43,15 @@ The monthly repayments are 1703.37$
 
 Code Structure
 
-    monthly_repayment(amount, interest, duration): Calculates monthly repayment.
-    loan_amount(repayment, interest, duration): Computes the maximum loan amount.
-    loan_duration(repayment, interest, amount): Estimates loan duration in years.
-    interest_rate(amount, repayment, duration): Approximates the interest rate.
+ * monthly_repayment(amount, interest, duration): Calculates monthly repayment.
+ * loan_amount(repayment, interest, duration): Computes the maximum loan amount.
+ * loan_duration(repayment, interest, amount): Estimates loan duration in years.
+ * interest_rate(amount, repayment, duration): Approximates the interest rate.
 
 Notes
 
-    Ensure input values are numeric to avoid errors.
-    For edge cases, such as very low repayment or interest rates, additional handling is included.
+Ensure input values are numeric to avoid errors.
+For edge cases, such as very low repayment or interest rates, additional handling is included.
 
 License
 
